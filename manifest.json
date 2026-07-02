@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "LeetCode List Enhancer",
+  "version": "1.0.0",
+  "description": "Show company tags inline, highlight hot questions, and hide difficulty in LeetCode lists. Company tags require Premium.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://leetcode.com/*"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "LeetCode List Enhancer",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/*"],
+      "js": ["src/content.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
