@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+
+# Local tooling / agent config
+.claude/
+
+# Build artifacts
+dist/
+*.zip
+
+# Node (only if you add tooling later)
+node_modules/
+npm-debug.log*
