@@ -2,3 +2,64 @@
 .lce-hidden-difficulty {
   visibility: hidden !important;
 }
+
+/* Inline company tag chips in each list row. The row is a fixed-height
+ * horizontal flexbox, so we shrink/clip rather than wrap; the chip title
+ * attribute carries the full name + count on hover. */
+.lce-companies {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  min-width: 0;
+  flex-shrink: 1;
+  overflow: hidden;
+}
+
+.lce-chip {
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 0 6px;
+  border-radius: 9999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  /* default (heat colors off) */
+  background: rgba(10, 132, 255, 0.15);
+  color: #1a73e8;
+}
+
+/* Heat coding: hot = frequently asked, cool = rarely. */
+.lce-chip.lce-hot {
+  background: rgba(255, 69, 58, 0.18);
+  color: #e0341f;
+}
+.lce-chip.lce-warm {
+  background: rgba(255, 159, 10, 0.18);
+  color: #b76b00;
+}
+.lce-chip.lce-cool {
+  background: rgba(10, 132, 255, 0.15);
+  color: #1a73e8;
+}
+
+.lce-chip.lce-more {
+  background: rgba(120, 120, 120, 0.2);
+  color: inherit;
+  opacity: 0.85;
+}
+
+@media (prefers-color-scheme: dark) {
+  .lce-chip,
+  .lce-chip.lce-cool {
+    background: rgba(10, 132, 255, 0.22);
+    color: #6ea8ff;
+  }
+  .lce-chip.lce-hot {
+    background: rgba(255, 69, 58, 0.22);
+    color: #ff7a6b;
+  }
+  .lce-chip.lce-warm {
+    background: rgba(255, 159, 10, 0.22);
+    color: #ffb340;
+  }
+}
