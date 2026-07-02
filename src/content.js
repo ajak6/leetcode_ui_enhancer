@@ -5,6 +5,8 @@
  *      Works on the main /problemset/ list AND the slide-out question-picker
  *      panel on the solve page (same row markup — verified 2026-06).
  *   3. Color chips by "heat" (how frequently a company asks the question).
+ *   4. Filter the list by company / to hot questions (dims non-matches; the
+ *      list is virtualized + React-controlled, so we dim rather than reorder).
  *
  * The list is virtualized: only ~visible rows exist and their <a> nodes are
  * RECYCLED on scroll. We track the slug last rendered onto each node and
@@ -44,6 +46,8 @@
     timeWindow: "6mo", // 6mo | 1yr | 2yr | all
     heatColors: true,
     maxChips: 5,
+    filterCompany: "", // comma-separated substrings; dims non-matching rows
+    hotOnly: false, // dim rows whose top company isn't "hot"
   };
 
   let settings = { ...DEFAULTS };
@@ -203,6 +207,37 @@
     row.querySelectorAll(".lce-companies").forEach((e) => e.remove());
   }
 
+  // -------------------------------------------------------------------- filtering
+  function rowMatchesFilter(companies) {
+    if (settings.hotOnly) {
+      const top = companies[0]?.count || 0;
+      if (top < CONFIG.heat.hot) return false;
+    }
+    const terms = settings.filterCompany
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    if (terms.length) {
+      const names = companies.map((c) => c.name.toLowerCase());
+      if (!terms.some((t) => names.some((n) => n.includes(t)))) return false;
+    }
+    return true;
+  }
+
+  function filterActive() {
+    return settings.hotOnly || settings.filterCompany.trim().length > 0;
+  }
+
+  function applyRowFilter(row) {
+    if (!settings.showCompanyTags || !filterActive()) {
+      row.classList.remove("lce-dim");
+      return;
+    }
+    const companies = row.__lceCompanies;
+    if (!companies) return; // not fetched yet; will be applied on render
+    row.classList.toggle("lce-dim", !rowMatchesFilter(companies));
+  }
+
   // ------------------------------------------------------------------- difficulty
   function applyDifficultyHiding() {
     const on = settings.hideDifficulty;
@@ -232,6 +267,7 @@
         if (!settings.showCompanyTags) return;
         clearChips(row);
         if (companies.length) renderChips(titleCell(row), companies);
+        applyRowFilter(row);
       })
       .catch((err) => {
         if (row.getAttribute(SLUG_ATTR) === slug) row.removeAttribute(SLUG_ATTR);
@@ -257,6 +293,7 @@
         ) {
           renderChips(titleCell(row), row.__lceCompanies);
         }
+        applyRowFilter(row);
         continue;
       }
 
@@ -291,6 +328,7 @@
         clearChips(row);
         if (settings.showCompanyTags && companies.length)
           renderChips(titleCell(row), companies);
+        applyRowFilter(row);
       });
     }
   }
@@ -298,6 +336,7 @@
   function stripAll() {
     document.querySelectorAll("[" + SLUG_ATTR + "]").forEach((row) => {
       clearChips(row);
+      row.classList.remove("lce-dim");
       row.removeAttribute(SLUG_ATTR);
       row.__lceCompanies = null;
     });
@@ -339,6 +378,7 @@
       applyDifficultyHiding();
       return;
     }
+    // Window / heat / maxChips changes need a re-render; others just reprocess.
     if (
       "timeWindow" in changes ||
       "heatColors" in changes ||

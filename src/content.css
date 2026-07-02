@@ -3,6 +3,12 @@
   visibility: hidden !important;
 }
 
+/* Dim rows that don't match the active company / hot filter. */
+.lce-dim {
+  opacity: 0.28 !important;
+  transition: opacity 0.15s ease;
+}
+
 /* Inline company tag chips in each list row. The row is a fixed-height
  * horizontal flexbox, so we shrink/clip rather than wrap; the chip title
  * attribute carries the full name + count on hover. */
