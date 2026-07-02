@@ -2,8 +2,9 @@ const DEFAULTS = {
   hideDifficulty: false,
   showCompanyTags: false,
   timeWindow: "6mo",
+  fillEmptyWindow: true,
   heatColors: true,
-  maxChips: 5,
+  maxChips: 4,
   filterCompany: "",
   hotOnly: false,
 };
@@ -13,11 +14,19 @@ const FIELDS = [
   ["hideDifficulty", "check"],
   ["showCompanyTags", "check"],
   ["timeWindow", "value"],
+  ["fillEmptyWindow", "check"],
   ["heatColors", "check"],
   ["maxChips", "number"],
   ["filterCompany", "value"],
   ["hotOnly", "check"],
 ];
+
+// Company filter presets. LeetCode labels Meta as "Meta", so match on "meta".
+const PRESETS = {
+  faang: "meta, apple, amazon, netflix, google",
+  fang: "meta, amazon, netflix, google",
+  bigtech: "meta, apple, amazon, netflix, google, microsoft",
+};
 
 const $ = (id) => document.getElementById(id);
 function setStatus(m) {
@@ -56,6 +65,17 @@ for (const [id, kind] of FIELDS) {
     setTimeout(() => setStatus(""), 1000);
   });
 }
+
+// Company preset buttons fill the filter field (and persist it).
+document.querySelectorAll(".chip-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const value = PRESETS[btn.dataset.preset] || "";
+    $("filterCompany").value = value;
+    chrome.storage.sync.set({ filterCompany: value });
+    setStatus(value ? "Filter set." : "Filter cleared.");
+    setTimeout(() => setStatus(""), 1000);
+  });
+});
 
 // Clear cached company data.
 $("clearCache").addEventListener("click", () => {

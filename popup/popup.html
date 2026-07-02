@@ -31,6 +31,11 @@
       </label>
 
       <label class="row sub">
+        <span><strong>Fill empty window</strong><small>If no tags in the window, show all-time (faded).</small></span>
+        <input type="checkbox" id="fillEmptyWindow" />
+      </label>
+
+      <label class="row sub">
         <span><strong>Heat colors</strong><small>Red = hot (frequently asked), amber = warm, blue = cool.</small></span>
         <input type="checkbox" id="heatColors" />
       </label>
@@ -44,6 +49,16 @@
         <span><strong>Filter by company</strong><small>Comma-separated. Dims non-matching rows.</small></span>
         <input type="text" id="filterCompany" placeholder="e.g. google, meta" />
       </label>
+
+      <div class="row sub presets">
+        <span><strong>Presets</strong><small>Quick company filters.</small></span>
+        <div class="preset-btns">
+          <button type="button" class="chip-btn" data-preset="faang">FAANG</button>
+          <button type="button" class="chip-btn" data-preset="fang">FANG</button>
+          <button type="button" class="chip-btn" data-preset="bigtech">Big&nbsp;Tech</button>
+          <button type="button" class="chip-btn" data-preset="">Clear</button>
+        </div>
+      </div>
 
       <label class="row sub">
         <span><strong>Hot only</strong><small>Dim rows with no hot company.</small></span>

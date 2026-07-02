@@ -9,9 +9,10 @@ lists:
 - **Heat colors** — chips are colored by how frequently the company asks the
   question: 🔴 hot, 🟠 warm, 🔵 cool — so frequently-asked questions stand out.
 - **Time window** — pull tags from the last 6 months (default), 6mo–1yr, 1–2yr,
-  or all time.
+  or all time. If a question has no tags in the selected window, it falls back to
+  all-time data (shown slightly faded) so questions still show their companies.
 - **Filter** — dim rows that don't include a chosen company, or that have no
-  "hot" company.
+  "hot" company. One-click **presets** for FAANG / FANG / Big Tech.
 - **Hide difficulty** — blur out the Easy / Medium / Hard labels.
 
 > **Company tags require a LeetCode Premium account.** Company data is a
