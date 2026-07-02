@@ -1,0 +1,4 @@
+/* Hide difficulty labels when the option is on. */
+.lce-hidden-difficulty {
+  visibility: hidden !important;
+}
