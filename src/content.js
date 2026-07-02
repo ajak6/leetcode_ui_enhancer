@@ -44,8 +44,9 @@
     hideDifficulty: false,
     showCompanyTags: false,
     timeWindow: "6mo", // 6mo | 1yr | 2yr | all
+    fillEmptyWindow: true, // if the window has no data, fall back to all-time
     heatColors: true,
-    maxChips: 5,
+    maxChips: 4,
     filterCompany: "", // comma-separated substrings; dims non-matching rows
     hotOnly: false, // dim rows whose top company isn't "hot"
   };
@@ -127,6 +128,16 @@
       .map(([name, count]) => ({ name, count }));
   }
 
+  // Companies to actually display for a question: the selected window, or (if
+  // that window is empty and fillEmptyWindow is on) all-time as a fallback, so
+  // questions not asked recently still show their historical companies.
+  function effectiveCompanies(raw) {
+    const list = parseCompanyStats(raw, settings.timeWindow);
+    if (list.length || !settings.fillEmptyWindow || settings.timeWindow === "all")
+      return { list, fallback: false };
+    return { list: parseCompanyStats(raw, "all"), fallback: true };
+  }
+
   // Cache the raw stats (window-independent) so switching windows needs no refetch.
   async function getRawStats(slug) {
     const key = "lce_stats_" + slug;
@@ -178,16 +189,17 @@
     return "cool";
   }
 
-  function renderChips(cell, companies) {
+  function renderChips(cell, companies, fallback) {
     const box = document.createElement("span");
-    box.className = "lce-companies";
+    box.className = "lce-companies" + (fallback ? " lce-fallback" : "");
+    const suffix = fallback ? " · all-time" : "";
     const max = settings.maxChips > 0 ? settings.maxChips : companies.length;
     for (const c of companies.slice(0, max)) {
       const chip = document.createElement("span");
       chip.className =
         "lce-chip" + (settings.heatColors ? " lce-" + heatOf(c.count) : "");
       chip.textContent = c.name;
-      chip.title = `${c.name} · ${c.count}× (${heatOf(c.count)})`;
+      chip.title = `${c.name} · ${c.count}×${suffix} (${heatOf(c.count)})`;
       box.appendChild(chip);
     }
     if (companies.length > max) {
@@ -262,11 +274,12 @@
     getRawStats(slug)
       .then((raw) => {
         if (slugOf(row) !== slug) return; // node recycled to another problem
-        const companies = parseCompanyStats(raw, settings.timeWindow);
-        row.__lceCompanies = companies;
+        const { list, fallback } = effectiveCompanies(raw);
+        row.__lceCompanies = list;
+        row.__lceFallback = fallback;
         if (!settings.showCompanyTags) return;
         clearChips(row);
-        if (companies.length) renderChips(titleCell(row), companies);
+        if (list.length) renderChips(titleCell(row), list, fallback);
         applyRowFilter(row);
       })
       .catch((err) => {
@@ -291,7 +304,7 @@
           row.__lceCompanies &&
           row.__lceCompanies.length
         ) {
-          renderChips(titleCell(row), row.__lceCompanies);
+          renderChips(titleCell(row), row.__lceCompanies, row.__lceFallback);
         }
         applyRowFilter(row);
         continue;
@@ -323,11 +336,12 @@
       clearChips(row);
       getRawStats(slug).then((raw) => {
         if (slugOf(row) !== slug) return;
-        const companies = parseCompanyStats(raw, settings.timeWindow);
-        row.__lceCompanies = companies;
+        const { list, fallback } = effectiveCompanies(raw);
+        row.__lceCompanies = list;
+        row.__lceFallback = fallback;
         clearChips(row);
-        if (settings.showCompanyTags && companies.length)
-          renderChips(titleCell(row), companies);
+        if (settings.showCompanyTags && list.length)
+          renderChips(titleCell(row), list, fallback);
         applyRowFilter(row);
       });
     }
@@ -381,6 +395,7 @@
     // Window / heat / maxChips changes need a re-render; others just reprocess.
     if (
       "timeWindow" in changes ||
+      "fillEmptyWindow" in changes ||
       "heatColors" in changes ||
       "maxChips" in changes
     ) {

@@ -54,6 +54,11 @@
   opacity: 0.85;
 }
 
+/* Chips shown as an all-time fallback (no data in the selected window). */
+.lce-companies.lce-fallback {
+  opacity: 0.72;
+}
+
 @media (prefers-color-scheme: dark) {
   .lce-chip,
   .lce-chip.lce-cool {
