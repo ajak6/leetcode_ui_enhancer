@@ -1,0 +1,122 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  width: 320px;
+  margin: 0;
+  padding: 14px 16px;
+  color: #1d1d1f;
+  background: #fff;
+}
+
+h1 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid #eee;
+  cursor: pointer;
+}
+
+.row.sub {
+  padding: 7px 0 7px 10px;
+  border-top: 1px solid #f4f4f4;
+}
+
+.row span {
+  display: flex;
+  flex-direction: column;
+}
+
+.row small {
+  color: #6e6e73;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+input[type="number"] {
+  width: 52px;
+}
+
+input[type="text"],
+select,
+input[type="number"] {
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 6px;
+  border: 1px solid #d2d2d7;
+  border-radius: 6px;
+  background: #fff;
+  color: inherit;
+  flex: 0 0 auto;
+}
+
+input[type="text"] {
+  width: 120px;
+}
+
+.group {
+  margin: 2px 0 4px;
+  border-left: 2px solid #eee;
+}
+
+.group.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.link {
+  background: none;
+  border: none;
+  color: #1a73e8;
+  padding: 10px 0 0;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.status {
+  font-size: 11px;
+  color: #6e6e73;
+  min-height: 14px;
+  margin: 6px 0 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1c1c1e;
+    color: #f5f5f7;
+  }
+  .row {
+    border-top-color: #2c2c2e;
+  }
+  .row.sub {
+    border-top-color: #262628;
+  }
+  .row small,
+  .status {
+    color: #98989d;
+  }
+  input[type="text"],
+  select,
+  input[type="number"] {
+    background: #2c2c2e;
+    border-color: #3a3a3c;
+    color: #f5f5f7;
+  }
+  .group {
+    border-left-color: #2c2c2e;
+  }
+}

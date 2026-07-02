@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="popup.css" />
+    <title>LeetCode List Enhancer</title>
+  </head>
+  <body>
+    <h1>LeetCode List Enhancer</h1>
+
+    <label class="row">
+      <span><strong>Hide difficulty</strong><small>Blur Easy / Medium / Hard labels.</small></span>
+      <input type="checkbox" id="hideDifficulty" />
+    </label>
+
+    <label class="row">
+      <span><strong>Show company tags</strong><small>Inline company chips per question. Requires Premium.</small></span>
+      <input type="checkbox" id="showCompanyTags" />
+    </label>
+
+    <div class="group" id="companyOpts">
+      <label class="row sub">
+        <span><strong>Time window</strong><small>Which period the tags come from.</small></span>
+        <select id="timeWindow">
+          <option value="6mo">Last 6 months</option>
+          <option value="1yr">6 mo – 1 year</option>
+          <option value="2yr">1 – 2 years</option>
+          <option value="all">All time</option>
+        </select>
+      </label>
+
+      <label class="row sub">
+        <span><strong>Heat colors</strong><small>Red = hot (frequently asked), amber = warm, blue = cool.</small></span>
+        <input type="checkbox" id="heatColors" />
+      </label>
+
+      <label class="row sub">
+        <span><strong>Max chips</strong><small>Companies shown before “+N”.</small></span>
+        <input type="number" id="maxChips" min="1" max="15" step="1" />
+      </label>
+
+      <label class="row sub">
+        <span><strong>Filter by company</strong><small>Comma-separated. Dims non-matching rows.</small></span>
+        <input type="text" id="filterCompany" placeholder="e.g. google, meta" />
+      </label>
+
+      <label class="row sub">
+        <span><strong>Hot only</strong><small>Dim rows with no hot company.</small></span>
+        <input type="checkbox" id="hotOnly" />
+      </label>
+    </div>
+
+    <button id="clearCache" class="link">Clear company tag cache</button>
+    <p id="status" class="status"></p>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
