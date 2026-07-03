@@ -29,12 +29,14 @@
     cacheTtlMs: 7 * 24 * 60 * 60 * 1000,
     maxConcurrentFetches: 3,
     fetchDelayMs: 150,
+    fetchTimeoutMs: 12000, // abort a stalled request so it can't block the queue
+    sweepMs: 4000, // periodic retry of rows that failed / never rendered
     // companyTagStats bucket keys → time window (verified against LeetCode).
     windowBucket: { "6mo": "1", "1yr": "2", "2yr": "3" },
     // Heat thresholds on "times encountered" within the selected window.
-    // Calibrated for the 6-month window, where counts are modest for all but
-    // the most popular questions (Two Sum's Google is 224×; Edit Distance 9×).
-    heat: { hot: 25, warm: 8 },
+    // Calibrated for the 6-month window, where counts are modest: a top company
+    // of ~15+ is genuinely frequent, so most lists surface a few "hot" ones.
+    heat: { hot: 15, warm: 5 },
   };
 
   const DIFFICULTY = ["Easy", "Medium", "Hard"];
@@ -84,19 +86,26 @@
 
   // ------------------------------------------------------------------- company tags
   async function graphql(query, variables) {
-    const res = await fetch(CONFIG.graphqlUrl, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "x-csrftoken": getCookie("csrftoken"),
-      },
-      body: JSON.stringify({ query, variables }),
-    });
-    if (!res.ok) throw new Error("GraphQL HTTP " + res.status);
-    const json = await res.json();
-    if (json.errors) throw new Error(JSON.stringify(json.errors));
-    return json.data;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), CONFIG.fetchTimeoutMs);
+    try {
+      const res = await fetch(CONFIG.graphqlUrl, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrftoken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({ query, variables }),
+        signal: ctrl.signal,
+      });
+      if (!res.ok) throw new Error("GraphQL HTTP " + res.status);
+      const json = await res.json();
+      if (json.errors) throw new Error(JSON.stringify(json.errors));
+      return json.data;
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   // Parse companyTagStats (JSON string keyed by bucket) for the chosen window.
@@ -362,6 +371,11 @@
       childList: true,
       subtree: true,
     });
+    // Periodic sweep: retry rows whose fetch failed or never rendered, even
+    // when the list is idle (no DOM mutations to trigger a re-process).
+    setInterval(() => {
+      if (settings.showCompanyTags) process();
+    }, CONFIG.sweepMs);
     const fire = () => setTimeout(schedule, 50);
     ["pushState", "replaceState"].forEach((fn) => {
       const orig = history[fn];
