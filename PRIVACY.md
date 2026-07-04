@@ -1,8 +1,8 @@
-# Privacy Policy — LeetCode List Enhancer
+# Privacy Policy — LeetKit
 
 _Last updated: 2026-07-03_
 
-LeetCode List Enhancer ("the extension") is a browser extension that adds
+LeetKit ("the extension") is a browser extension that adds
 company tags and display options to LeetCode's question lists. This policy
 explains what the extension does and does not do with your data.
 

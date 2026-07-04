@@ -1,4 +1,4 @@
-/* LeetCode List Enhancer — content script
+/* LeetKit — content script
  *
  *   1. Hide difficulty labels in question lists.
  *   2. Show company tags per question (Premium GraphQL), inline in the list.
@@ -54,7 +54,7 @@
   };
 
   let settings = { ...DEFAULTS };
-  const log = (...a) => console.debug("[LCE]", ...a);
+  const log = (...a) => console.debug("[LeetKit]", ...a);
 
   function getCookie(name) {
     const m = document.cookie.match(new RegExp("(^|;\\s*)" + name + "=([^;]*)"));

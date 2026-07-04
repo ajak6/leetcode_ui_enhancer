@@ -1,6 +1,6 @@
-# LeetCode List Enhancer
+# LeetKit
 
-A lightweight Chrome (Manifest V3) extension that improves LeetCode's question
+A lightweight Chrome (Manifest V3) toolkit that improves LeetCode's question
 lists:
 
 - **Show company tags inline** — see which companies ask each question, right in
